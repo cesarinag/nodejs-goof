@@ -26,9 +26,9 @@ jobs:
           command: |
             export TAG=latest
             export IMAGE_NAME=$CIRCLE_PROJECT_REPONAME
-            docker build -t shannreid/juice-shop -t shannreid/juice-shop:latest .
+            docker build -t cesarinag/juice-shop -t cesarinag/juice-shop:92122 .
       - snyk/scan:
-          docker-image-name: shannreid/juice-shop
+          docker-image-name: cesarinag/juice-shop
           target-file: "Dockerfile"
           fail-on-issues: true  
   snykcode:
