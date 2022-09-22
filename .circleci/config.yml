@@ -4,45 +4,26 @@ version: 2.1
 orbs: 
   snyk: snyk/snyk@1.1.2
 jobs:
-  snyktest:
+  runsnyk:
     docker:
       - image: circleci/node:12
     steps:
       - checkout
       - run:
-          name: Install npm dependencies
-          command: 'npm install' 
-      - snyk/scan:
-          fail-on-issues: false
-  build_docker_image:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - setup_remote_docker:
-          docker_layer_caching: false
-      - run:
-          name: Build Docker image
+          name: Install npm dependencies, snyk cli, snyk-to-html and authenticate
           command: |
-            export TAG=latest
-            export IMAGE_NAME=$CIRCLE_PROJECT_REPONAME
-            docker build -t cesarinag/juice-shop -t cesarinag/juice-shop:92122 .
+                    'npm i'
+                    'npm i snyk -g'
+                    'npm i snyk-to-html'
+                    'snyk auth ${SNYK_TOKEN}'
+                    'snyk code test --sarif  > results_code.sarif || true'
+                    'snyk-to-html -i results_code.sarif -o results_code.html || true'
+                    'snyk test monitor --all-projects --json | snyk-to-html -o results_sca.html || true'
+                    'snyk iac test . --json | snyk-to-html -o results_iac.html || true'
+                    'snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true'
       - snyk/scan:
-          docker-image-name: cesarinag/juice-shop
-          target-file: "Dockerfile"
-          fail-on-issues: true  
-  snykcode:
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - snyk/scan:
-          fail-on-issues: true 
-          additional-arguments: '--code'                
+          fail-on-issues: false              
 workflows:
   test:
     jobs:
-      - snyktest
-      - snykcode
-      - snyk/scan-iac
-      - build_docker_image
+      - runsnyk
