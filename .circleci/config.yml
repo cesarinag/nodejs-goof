@@ -7,12 +7,11 @@ jobs:
           username: cesarinag
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
 
-    working_directory: /tmp
     steps:
       - run:
           name: Creating snyk-to-html reports
           command: |
-            mkdir /tmp/artifacts;
+            mkdir ~/artifacts;
             npm install snyk -g;
             npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
@@ -21,11 +20,10 @@ jobs:
             snyk-to-html -i results_code.sarif -o results_code.html || true;
             snyk iac test . --json | snyk-to-html -o results_iac.html || true;
             snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
-            echo "snyk container test cesarinag/juice-shop:7.17.22 --json" > snyk-to-html -o results_container.html /tmp/artifacts/results_container.html;
 
       - store_artifacts:
-          path: /tmp/artifact-1
-          destination: artifact-file
+          path: ~/artifact-1
+          destination: results.html
 
       - store_artifacts:
-          path: /tmp/artifacts
+          path: ~/artifacts
