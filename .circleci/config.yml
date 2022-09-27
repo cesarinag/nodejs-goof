@@ -20,5 +20,4 @@ jobs:
             snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
 
       - store_artifacts:
-          path: /tmp/artifacts
-          destination: artifacts 
+          path: /bin/artifacts
