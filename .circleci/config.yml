@@ -1,26 +1,39 @@
 version: 2.1
 jobs:
   build:
+    working_directory: ~/nodejs-goof-circleci
     docker:
       - image: node:latest
         auth:
           username: cesarinag
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
+      - checkout
+      - run: echo "hello matthew"
       - run:
-          name: Creating snyk-to-html reports
+          name: install snyk, authenticate, download snyk-to-html
           command: |
             npm install snyk -g;
             npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
-            snyk test --json | snyk-to-html -o results.html
+      - run:
+          name: snyk test
+          command: snyk test --json | snyk-to-html -o results.html
+      - run:
+          name: snyk code test
+          command: |
             snyk code test --sarif > results_code.sarif || true;
             snyk-to-html -i results_code.sarif -o results_code.html || true;
-            snyk iac test . --json | snyk-to-html -o results_iac.html || true;
-            snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
+      - run:
+          name: snyk iac test
+          command: snyk iac test . --json | snyk-to-html -o results_iac.html || true;
+      - run:
+          name: snyk container test
+          command: snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
 
       - store_artifacts:
           path: results.html
+          destination: results.html
 
       - store_artifacts:
           path: results_code.html
