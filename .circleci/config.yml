@@ -12,7 +12,6 @@ jobs:
       - run:
           name: Install npm dependencies, snyk cli, snyk-to-html, authenticate and test
           command: |
-                    'sudo npm install snyk -g'
                     'sudo npm install snyk-to-html'
                     'snyk auth ${SNYK_TOKEN}'
                     'snyk code test --sarif  > results_code.sarif || true'
