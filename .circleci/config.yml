@@ -8,13 +8,29 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
       - run:
-          name: Creating snyk-to-html report
+          name: Creating snyk-to-html reports
           command: |
             npm install snyk -g;
             npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
             snyk test --json | snyk-to-html -o results.html
+            snyk code test --sarif > results_code.sarif || true;
+            snyk-to-html -i results_code.sarif -o results_code.html || true;
+            snyk iac test . --json | snyk-to-html -o results_iac.html || true;
+            snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
 
       - store_artifacts:
           path: results.html
           destination: results.html
+
+      - store_artifacts:
+          path: results_code.html
+          destination: results_code.html
+
+      - store_artifacts:
+          path: results_container.html
+          destination: results_container.html
+
+      - store_artifacts:
+          path: results_iac.html
+          destination: results_iac.html
