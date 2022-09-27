@@ -13,7 +13,7 @@ jobs:
           name: Creating snyk-to-html reports
           command: |
             npm install snyk -g;
-            npm install snyk-to-html;
+            npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
             snyk code test --sarif > results_code.sarif || true;
             snyk-to-html -i results_code.sarif -o results_code.html || true;
