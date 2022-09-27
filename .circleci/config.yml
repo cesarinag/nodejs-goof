@@ -21,7 +21,6 @@ jobs:
 
       - store_artifacts:
           path: results.html
-          destination: results.html
 
       - store_artifacts:
           path: results_code.html
