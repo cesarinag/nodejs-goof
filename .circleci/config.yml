@@ -11,6 +11,9 @@ jobs:
       - run:
           name: Creating snyk-to-html reports
           command: |
+            echo "my artifact file" > /tmp/artifact-1;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
             npm install snyk -g;
             npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
@@ -19,9 +22,6 @@ jobs:
             snyk-to-html -i results_code.sarif -o results_code.html || true;
             snyk iac test . --json | snyk-to-html -o results_iac.html || true;
             snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
-            echo "my artifact file" > /tmp/artifact-1;
-            mkdir /tmp/artifacts;
-            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
 
       - store_artifacts:
           path: /tmp/artifact-1
