@@ -14,15 +14,21 @@ jobs:
             npm install snyk -g;
             npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
+            snyk test --json | snyk-to-html -o results.html            
             snyk code test --sarif > results_code.sarif || true;
             snyk-to-html -i results_code.sarif -o results_code.html || true;
             snyk iac test . --json | snyk-to-html -o results_iac.html || true;
             snyk container test cesarinag/juice-shop:7.17.22 --json | snyk-to-html -o results_container.html || true;
-            mkdir /bin/artifacts;
-            echo "my artifact files in a dir" > /bin/artifacts/artifact-2;
+            echo "my artifact file" > /tmp/artifact-1;
+            mkdir /tmp/artifacts;
+            echo "my artifact files in a dir" > /tmp/artifacts/artifact-2;
 
       - store_artifacts:
-          path: /bin/artifacts
+          path: /tmp/artifact-1
+          destination: artifact-file
+
+      - store_artifacts:
+          path: /tmp/artifacts
 
       - store_test_results:
           path: test-results
