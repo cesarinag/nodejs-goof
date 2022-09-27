@@ -1,4 +1,6 @@
 version: 2.1
+orbs:
+  artifacts: eddiewebb/artifacts@0.1.53
 jobs:
   build:
     docker:
