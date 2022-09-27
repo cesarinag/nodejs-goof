@@ -1,6 +1,4 @@
 version: 2.1
-orbs:
-  artifacts: eddiewebb/artifacts@0.1.53
 jobs:
   build:
     docker:
@@ -8,17 +6,15 @@ jobs:
         auth:
           username: cesarinag
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
-    working_directory: ~/artifacts
     steps:
       - run:
           name: Creating snyk-to-html report
           command: |
-            mkdir ~/results;
             npm install snyk -g;
             npm install snyk-to-html -g;
             snyk auth $SNYK_TOKEN;
             snyk test --json | snyk-to-html -o results.html
 
       - store_artifacts:
-          path: ~/result-1
+          path: results.html
           destination: results.html
